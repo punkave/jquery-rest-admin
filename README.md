@@ -96,7 +96,8 @@ Again, note that by default nested admins don't do their own REST requests. Inst
 
 By default, jquery-rest-admin looks for a primary key in the id column of each object. You can change this by specifying an alternate column name with the "id" option.
 
-== What Does My Backend REST Controller Have To Do? 
+What Does My Backend REST Controller Have To Do?
+================================================
 
 By default jquery-rest-admin retrieves, creates, updates and deletes objects via the REST URL that you specify. If your `url` option is set to `/admin/categories`, then the following methods and URLs will be accessed as needed:
 
@@ -110,11 +111,13 @@ By default jquery-rest-admin retrieves, creates, updates and deletes objects via
 
 `PUT /admin/categories/rank` submits a single array parameter called `order`, containing a list of the IDs of all items, in the order in which the user has just manually sorted them. This will never happen if `options.sortable` is not true. The response does not matter as long as the status code is successful.
 
-== Browser-Side Validation
+Browser-Side Validation
+=======================
 
 We do a little. Soon we'll do more. Right now you can set `required: true` or `unique: true` for a column. If you set `required: true` that column can't be left blank. If you set `unique: true`, a new or updated object is not permitted to have the same value for that column as another object. Keep in mind this is based only on what is known to the admin. 
 
-== Overriding The Storage Method
+Overriding The Storage Method
+=============================
 
 If you don't like the default REST storage implementation, you can override the following:
 
@@ -170,6 +173,7 @@ Finally, `defaultValue` establishes the default value for columns of this type i
 
 Note that you can override any part of the standard types' implementation via the options object, as well as adding new types.
 
-== TODO
+TODO
+====
 
 You can override a number of things not documented here. There are lots of things you can't override yet, in particular the markup. We need a way to propagate server-side validation errors into the UI rather than just mysteriously ignoring a request to save or delete. TODO: document all that; implement more great stuff.
