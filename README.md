@@ -133,13 +133,14 @@ If you don't like the default REST storage implementation, you can override the 
 
 "What if I just want to update an array of objects on the browser side and I don't care about storage in a backend somewhere?" Just set `options.local` to true and make sure you pass in the initial array of objects as `options.data`. Your `options.data` array will be updated in place, so that you can inspect it at any time and find the latest edits are present. (TODO: provide events to make it apparent that edits have occurred.)
 
-== Adding and Customizing Types
+Adding and Customizing Types
+============================
 
 Right now the available column types are:
 
 `text`, `checkbox`, `select` (single selection), and `admin`
 
-Of course this is not enough for everyone. 
+Of course this is not enough for everyone (TODO: add `multiple` hurryupquick, based on `aMultipleSelect`).
 
 Fortunately you can add your own types. This is what the `text` type would look like if it were not built in:
 
