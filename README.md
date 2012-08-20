@@ -107,7 +107,7 @@ By default jquery-rest-admin retrieves, creates, updates and deletes objects via
 
 `PUT /admin/categories/5` updates the object with the id 5. Otherwise it is identical to POST. It should return a JSON object representing the saved object on success.
 
-`DELETE /admin/categories` deletes the object with the id 5. It should return a JSON object representing the deleted object on success.
+`DELETE /admin/categories/5` deletes the object with the id 5. It should return a JSON object representing the deleted object on success.
 
 `PUT /admin/categories/rank` submits a single array parameter called `order`, containing a list of the IDs of all items, in the order in which the user has just manually sorted them. This will never happen if `options.sortable` is not true. The response does not matter as long as the status code is successful.
 
