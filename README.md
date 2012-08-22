@@ -146,7 +146,7 @@ Adding and Customizing Types
 
 Right now the available column types are:
 
-`text`, `checkbox`, `select` (single selection), and `admin`
+`text`, `checkbox`, `select` (single selection), `readOnly` (a text field that cannot be edited), and `admin`
 
 Of course this is not enough for everyone (TODO: add `multiple` hurryupquick, based on `aMultipleSelect`).
 
