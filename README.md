@@ -116,6 +116,14 @@ Browser-Side Validation
 
 We do a little. Soon we'll do more. Right now you can set `required: true` or `unique: true` for a column. If you set `required: true` that column can't be left blank. If you set `unique: true`, a new or updated object is not permitted to have the same value for that column as another object. Keep in mind this is based only on what is known to the admin. 
 
+You can also set `deleteValidator`, which should be a function that takes three parameters:
+
+    deleteValidator: function(datum, schema, name) { ... }
+
+The first argument is the object to be deleted. The second argument is the schema object (options.schema). The third argument is the name of the column being validated.
+
+If your deleteValidator returns true, the deletion is allowed to proceed. If the deleteValidator returns false, the deletion is blocked. 
+
 Overriding The Storage Method
 =============================
 

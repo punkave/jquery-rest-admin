@@ -234,6 +234,23 @@
       defaultValue: false
     });
 
+    if (!options.types.readOnly)
+    {
+      options.types.readOnly = {};
+    }
+
+    _.defaults(options.types.readOnly, {
+      listText: function(column, val) {
+        return val;
+      },
+      control: function(column, val) {
+        var e = $('<input type="text" readonly data-role="control"></span>');
+        e.val(val);
+        return e;
+      },
+      defaultValue: ''
+    });
+
     if (!options.types.select)
     {
       options.types.select = {};
@@ -459,10 +476,7 @@
         var invalid = false;
         eachColumn(function(column) {
           // Some types just update the datum directly
-          if (!options.types[column.type].selfUpdating)
-          {
-            datum[column.name] = form.find('[data-column="' + column.name + '"]').val();
-          }
+          updateColumn(datum, column);
           if (column.required && (!datum[column.name]))
           {
             column.arrow.show();
@@ -503,6 +517,22 @@
       if (!isNew)
       {
         removeButton.click(function() {
+          var invalid = false;
+          eachColumn(function(column) {
+            if (column.deleteValidator)
+            {
+              updateColumn(datum, column);
+              if (!column.deleteValidator(datum, options.schema, column.name))
+              {
+                column.arrow.show();
+                invalid = true;
+              }
+            }
+          });
+          if (invalid)
+          {
+            return false;
+          }
           if (!options.removeConfirm)
           {
             options.removeConfirm = "Are you sure you want to delete this item?";
@@ -534,6 +564,14 @@
       }
       container.html('');
       container.append(outer);
+
+      function updateColumn(datum, column)
+      {
+        if (!options.types[column.type].selfUpdating)
+        {
+          datum[column.name] = form.find('[data-column="' + column.name + '"]').val();
+        }
+      }
     }
 
     function isDuplicate(datum, column)
