@@ -1,18 +1,18 @@
 // REST-powered admin for any table of data.
 //
 // var items = [ { name: 'foo' }, { name: 'baz'} ];
-// aRestAdmin({ 
-//   data: items, 
+// aRestAdmin({
+//   data: items,
 //   url: '/admin/products',
-//   sortable: true, 
-//   container: '.types', 
-//   schema: [ 
-//     { 
-//       name: "name", 
-//       type: "text", 
-//       label: "Name" 
-//     } 
-//   ] 
+//   sortable: true,
+//   container: '.types',
+//   schema: [
+//     {
+//       name: "name",
+//       type: "text",
+//       label: "Name"
+//     }
+//   ]
 // });
 //
 // There are additional options as seen below.
@@ -20,7 +20,7 @@
 (function( $ ){
 
   $.fn.restAdmin = function(options) {
-  
+
     var container = this;
 
     // Primary key column name. There must be one to save and delete items.
@@ -38,7 +38,7 @@
 
     // Used to assign temporary IDs to new objects. Needed
     // only when options.local is true (typically for nested admins).
-    // The temporary IDs start with _temp_ so they are easier to spot 
+    // The temporary IDs start with _temp_ so they are easier to spot
     // server-side if necessary.
     var tempId = 1;
 
@@ -111,7 +111,7 @@
           options.data.length = 0;
           _.each(order, function(id) {
             options.data.push(byId[id]);
-          })
+          });
           params.success(order);
         }
       });
@@ -124,14 +124,14 @@
     {
       options.create = function(datum, params)
       {
-        $.ajax(options.url, { 
-          type: 'POST', 
+        $.ajax(options.url, {
+          type: 'POST',
           data: datum,
           dataType: 'json',
           success: params.success,
           error: params.error
         });
-      }
+      };
     }
 
     // PUT an existing item
@@ -139,14 +139,14 @@
     {
       options.update = function(datum, params)
       {
-        $.ajax(options.url + '/' + datum[idColumn], { 
-          type: 'PUT', 
+        $.ajax(options.url + '/' + datum[idColumn], {
+          type: 'PUT',
           data: datum,
           dataType: 'json',
           success: params.success,
           error: params.error
         });
-      }
+      };
     }
 
     // GET all items
@@ -154,13 +154,13 @@
     {
       options.loadData = function(params)
       {
-        $.ajax(options.url, { 
-          type: 'GET', 
+        $.ajax(options.url, {
+          type: 'GET',
           dataType: 'json',
           success: params.success,
           error: params.error
         });
-      }
+      };
     }
 
     // DELETE an existing item
@@ -168,13 +168,13 @@
     {
       options.remove = function(datum, params)
       {
-        $.ajax(options.url + '/' + datum[idColumn], { 
-          type: 'DELETE', 
+        $.ajax(options.url + '/' + datum[idColumn], {
+          type: 'DELETE',
           dataType: 'json',
           success: params.success,
           error: params.error
         });
-      }
+      };
     }
 
     // Change sort order for all items
@@ -183,14 +183,14 @@
     {
       options.rank = function(order, params)
       {
-        $.ajax(options.url + '/rank', { 
-          type: 'PUT', 
+        $.ajax(options.url + '/rank', {
+          type: 'PUT',
           dataType: 'json',
           data: { order: order },
           success: params.success,
           error: params.error
         });
-      }
+      };
     }
 
     // Types can be overridden freely to any degree
@@ -224,7 +224,7 @@
 
     _.defaults(options.types.checkbox, {
       listText: function(column, val) {
-        return val ? 'Yes' : 'No'
+        return val ? 'Yes' : 'No';
       },
       control: function(column, val) {
         var e = $('<input type="checkbox" data-role="control" value="1" />');
@@ -320,7 +320,7 @@
             params.success();
           }
         });
-      }
+      };
     }
 
     if (!options.data)
@@ -341,7 +341,7 @@
 
     function list()
     {
-      var table = $('<table></table>');
+      var table = $('<table class="table table-striped"></table>');
       var headerRow = $('<tr></tr>');
 
       eachColumn(function(column) {
@@ -368,11 +368,11 @@
             }
             first = false;
           }
-          var text = $('<span><span>').text(options.types[column.type].listText(column, datum[column.name]));
+          var text = options.types[column.type].listText(column, datum[column.name]);
           td.append(text);
           row.append(td);
         });
-        var controls = $('<td><a href="#" class="btn" data-role="edit">Edit</a></td>');
+        var controls = $('<td><a href="#" class="btn btn-mini " data-role="edit"><i class="icon-pencil"></i> Edit</a></td>');
         row.append(controls);
         row.data('id', datum[idColumn]);
         tbody.append(row);
@@ -402,7 +402,7 @@
       }
       table.append(tbody);
 
-      var newButton = $('<a class="btn btn-primary" href="#" data-role="new">New</a>');
+      var newButton = $('<button class="btn btn-primary btn-large" data-role="new"><i class="icon-plus"></i> New</button>');
       newButton.click(function() {
         edit(false);
         return false;
@@ -444,16 +444,23 @@
         fieldset.find('[data-role="label"]').text(column.label);
         var control = options.types[column.type].control(column, datum[column.name]);
         control.attr('data-column', column.name);
-        fieldset.append(control);
+        if (column.type == ('checkbox' || 'radio')) {
+          fieldset.find('label').prepend(control).addClass(column.type);
+        }
+        else {
+          fieldset.append(control);
+        }
+
         form.append(fieldset);
       });
       outer.append(form);
-      var saveButton = $('<a class="btn btn-primary" href="#" data-role="submit">Save</a>');
-      var cancelButton = $('<a class="btn" href="#" data-role="cancel">Cancel</a>');
+      var controlGroup = $('<div class="form-actions"></div>');
+      var saveButton = $('<button class="btn btn-primary" data-role="submit">Save</button> ');
+      var cancelButton = $('<button class="btn" data-role="cancel">Cancel</button> ');
       var removeButton;
       if (!isNew)
       {
-        var removeButton = $('<a class="btn btn-warning" href="#" data-role="delete">Delete</a>');
+        removeButton = $('<button class="btn btn-danger" data-role="delete">Delete</button> ');
       }
       saveButton.click(function() {
         var invalid = false;
@@ -482,13 +489,13 @@
         }
         var method = isNew ? 'create' : 'update';
         options[method](
-          datum, 
-          { 
+          datum,
+          {
             'success': function(newDatum) {
               // We have consistently been burned when we have
               // assumed we know exactly how to update the list view
-              // from the browser side. Think about pagination, 
-              // sort order, and server side cleaning of the data. 
+              // from the browser side. Think about pagination,
+              // sort order, and server side cleaning of the data.
               // Discover humility. Call refresh. Om.
               options.refreshData({ success: list });
             }
@@ -515,8 +522,8 @@
                 'success':  function(datum) {
                   // We have consistently been burned when we have
                   // assumed we know exactly how to update the list view
-                  // from the browser side. Think about pagination, 
-                  // sort order, and server side cleaning of the data. 
+                  // from the browser side. Think about pagination,
+                  // sort order, and server side cleaning of the data.
                   // Discover humility. Call refresh. Om.
                   options.refreshData({ success: list });
                 }
@@ -526,11 +533,12 @@
           return false;
         });
       }
-      outer.append(saveButton);
-      outer.append(cancelButton);
+      form.append(controlGroup);
+      controlGroup.append(saveButton);
+      controlGroup.append(cancelButton);
       if (!isNew)
       {
-        outer.append(removeButton);
+        controlGroup.append(removeButton);
       }
       container.html('');
       container.append(outer);
