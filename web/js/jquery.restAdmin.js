@@ -234,10 +234,53 @@
       defaultValue: ''
     });
 
-    if (!options.types.textarea)
+    if (!options.types.richtext)
     {
-      options.types.textarea = {};
+      options.types.richtext = {};
     }
+
+    _.defaults(options.types.richtext, {
+      listText: function(column, val) {
+        var el = $('<div></div>');
+        try {
+          el.html(val);
+          return el.text().substr(0, 80);
+        } catch (e) {
+          return '';
+        }
+      },
+      control: function(column, val) {
+        var e = $('<textarea data-role="control" class="jquery-rest-admin jwysiwyg"></textarea>');
+        e.val(val);
+        e.bind('jraUpdate', function() {
+          e.wysiwyg('save');
+        });
+        // https://github.com/jwysiwyg/jwysiwyg/issues/326
+        // must make sure it's added to the DOM first
+        e.bind('jraAdded', function() {
+          console.log('jraAdded received');
+          $(function() {
+            console.log('calling wysiwyg on:');
+            console.log(e);
+            e.wysiwyg({
+              controls: {
+                bold: { visible: true },
+                italic: { visible: true },
+                createLink: { visible: true },
+                unLink: { visible: true },
+                code: { visible: true },
+                removeFormat: { visible: true },
+              },
+              controlImage: {
+                forceRelativeUrls: true
+              },
+            });
+          });
+        });
+        return e;
+      },
+      defaultValue: ''
+    });
 
     if (!options.types.checkbox)
     {
@@ -596,12 +639,16 @@
       container.html('');
       container.append(outer);
 
+      // Useful for controls that need to do certain things
+      // only after they are really added to the document
+      container.find('[data-role="control"]').trigger('jraAdded');
+
       function updateColumn(datum, column)
       {
         // Some controls need a nudge to update
         // (for example, rich text editors need to sync
         // to their associated hidden textarea)
-        form.find('[data-column]').trigger('jraUpdate');
+        form.find('[data-role="control"]').trigger('jraUpdate');
         if (!options.types[column.type].selfUpdating)
         {
           datum[column.name] = form.find('[data-column="' + column.name + '"]').val();
