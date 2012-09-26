@@ -255,15 +255,11 @@
         e.attr('id', id);
         e.val(val);
         e.bind('jraUpdate', function() {
-          console.log('jraUpdate -> CKEDITOR update for: ' + id);
           CKEDITOR.instances[id].updateElement();
         });
         // Wait until it's actually in the DOM
         e.bind('jraAdded', function() {
-          console.log('jraAdded received');
           $(function() {
-            console.log('calling CKEDITOR.replace with: ' + id);
-            console.log(e);
             CKEDITOR.replace(id);
           });
         });
@@ -430,7 +426,6 @@
         var row = $('<tr data-role="row"></tr>');
         var first = true;
         eachColumn(function(column) {
-          console.log(column.type);
           var val = options.types[column.type].listText(column, datum[column.name]);
           var td = $('<td></td>');
           if (first)
