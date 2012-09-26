@@ -250,31 +250,21 @@
         }
       },
       control: function(column, val) {
+        var id = 'jra-rte-' + Math.floor(Math.random() * 1000000000);
         var e = $('<textarea data-role="control" class="jquery-rest-admin jwysiwyg"></textarea>');
+        e.attr('id', id);
         e.val(val);
         e.bind('jraUpdate', function() {
-          e.wysiwyg('save');
+          console.log('jraUpdate -> CKEDITOR update for: ' + id);
+          CKEDITOR.instances[id].updateElement();
         });
-        // https://github.com/jwysiwyg/jwysiwyg/issues/326
-        // must make sure it's added to the DOM first
+        // Wait until it's actually in the DOM
         e.bind('jraAdded', function() {
           console.log('jraAdded received');
           $(function() {
-            console.log('calling wysiwyg on:');
+            console.log('calling CKEDITOR.replace with: ' + id);
             console.log(e);
-            e.wysiwyg({
-              controls: {
-                bold: { visible: true },
-                italic: { visible: true },
-                createLink: { visible: true },
-                unLink: { visible: true },
-                code: { visible: true },
-                removeFormat: { visible: true },
-              },
-              controlImage: {
-                forceRelativeUrls: true
-              },
-            });
+            CKEDITOR.replace(id);
           });
         });
         return e;

@@ -146,7 +146,9 @@ Adding and Customizing Types
 
 Right now the available column types are:
 
-`text`, `checkbox`, `select` (single selection), `readOnly` (a text field that cannot be edited), and `admin`
+`text`, `textarea`, `richtext`, `checkbox`, `select` (single selection), `readOnly` (a text field that cannot be edited), and `admin`.
+
+The `richtext` type is currently coded to rely on CKEditor. If you use it, you are responsible for loading ckeditor.js before you instantiate jqueryRestAdmin. The default toolbar is used (yes, it would be nice to pass on ckeditor configuration options, including the location of the custom configuration file - send us a pull request). 
 
 Of course this is not enough for everyone (TODO: add `multiple` hurryupquick, based on `aMultipleSelect`).
 
@@ -181,6 +183,13 @@ If your type has an HTML element which can be interrogated with the regular jQue
 Finally, `defaultValue` establishes the default value for columns of this type if there is no default value for the column.
 
 Note that you can override any part of the standard types' implementation via the options object, as well as adding new types.
+
+Events
+======
+
+If your control does have an element that can be queried via `val()` but needs a nudge to update it when a save operation takes place, just bind the jraUpdate jQuery event on your control.
+
+If your control needs to do part of its initialization after it is absolutely positively really added to the DOM of the page, bind the jraAdded jQuery event on your control.
 
 TODO
 ====
