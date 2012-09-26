@@ -217,6 +217,28 @@
       defaultValue: ''
     });
 
+    if (!options.types.textarea)
+    {
+      options.types.textarea = {};
+    }
+
+    _.defaults(options.types.textarea, {
+      listText: function(column, val) {
+        return val.substr(0, 80);
+      },
+      control: function(column, val) {
+        var e = $('<textarea data-role="control"></textarea>');
+        e.val(val);
+        return e;
+      },
+      defaultValue: ''
+    });
+
+    if (!options.types.textarea)
+    {
+      options.types.textarea = {};
+    }
+
     if (!options.types.checkbox)
     {
       options.types.checkbox = {};
@@ -375,6 +397,7 @@
         var row = $('<tr data-role="row"></tr>');
         var first = true;
         eachColumn(function(column) {
+          console.log(column.type);
           var val = options.types[column.type].listText(column, datum[column.name]);
           var td = $('<td></td>');
           if (first)
@@ -575,6 +598,10 @@
 
       function updateColumn(datum, column)
       {
+        // Some controls need a nudge to update
+        // (for example, rich text editors need to sync
+        // to their associated hidden textarea)
+        form.find('[data-column]').trigger('jraUpdate');
         if (!options.types[column.type].selfUpdating)
         {
           datum[column.name] = form.find('[data-column="' + column.name + '"]').val();
