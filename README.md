@@ -7,7 +7,7 @@ Here's an example with text, checkbox and single select controls. This example m
 
 (Of course, since this is a browser-side solution, your REST controller must check permissions and validate everything sent to it for possible malicious or out-of-bounds data, no matter how much browser-side validation has been done.)
 
-Note that we pass in an array of JSONified "type" objects as the choices for one of the single select dropdowns. We can do that as long as we specify what the `choiceLabel` and `choiceValue` property names are. Another single select dropdown just has `label` and `value` properties for each option. These are the default values for `choiceLabel` and `choiceValue`.
+Note that we pass in an array of JSONified "type" objects as the choices for one of the single select dropdowns. We can do that as long as we specify what the `choiceLabel` and `choiceValue` property names are. Another single select dropdown just has `label` and `value` properties for each option. These are the default values for `choiceLabel` and `choiceValue`. 
 
     $(function() {
       var types = [ { name: "Free", id: 1 }, { name: "Jobs", id: 2 } ];
@@ -103,7 +103,7 @@ By default jquery-rest-admin retrieves, creates, updates and deletes objects via
 
 `GET /admin/categories` should return a JSON array containing JSON objects representing every item. Items will be presented in the order returned (TODO: support browser side sorting). At some point `offset` and `limit` query parameters for server side pagination will be supported.
 
-`POST /admin/categories` creates a new object by submitting a standard POST request with a value for each editable property of the object. Note that the request looks just like a normal POST form submission. If there are nested admins, by default their entire contents serialize as an array parameter in the parent admin's POST submission. It should return a JSON object representing the saved object on success.
+`POST /admin/categories` creates a new object by submitting a standard POST request with a value for each editable property of the object. Note that the request looks just like a normal POST form submission. If there are nested admins, by default their entire contents serialize as an array parameter in the parent admin's POST submission. It should return a JSON object representing the saved object on success. A checkbox that is checked submits the value 1. A checkbox that is not checked submits an empty string. This is a big improvement over the ambiguous "field not present at all" behavior of standard HTML checkboxes. It's very handy in both PHP and JavaScript, because both languages consider 1 true and an empty string false. Our apologies to Ruby developers who may have to explicitly check for an empty string, but you can't submit `false` or `nil` via a traditional urlencoded form, so there's not a lot more we can do to help.
 
 `PUT /admin/categories/5` updates the object with the id 5. Otherwise it is identical to POST. It should return a JSON object representing the saved object on success.
 
@@ -179,6 +179,8 @@ Then the `column` object has `name` and `required` properties that can be access
 The `control` method returns a jQuery element which displays an editing control for your type. The column object is the first parameter and the current value is the second. 
 
 If your type has an HTML element which can be interrogated with the regular jQuery `val()` function to get its current value, just make sure your `control` method applies a `data-role="control"` attribute to it so that jquery-rest-admin can locate that element. Alternatively, you can set `selfUpdating: true`, in which case your control is expected to directly update `val`. This is the right approach if the value of your column is a modifiable object. This feature is currently used for nested admins, but you may find it useful elsewhere. 
+
+An alternative to `selfUpdating: true` is to define a `getValue` function for your type. This function receives the column definition as its first argument and the jQuery element for the control as second argument, and should return the appropriate value to submit. See the built-in implementation of the checkbox type for a good example, included because val() is not useful for checkboxes.
 
 Finally, `defaultValue` establishes the default value for columns of this type if there is no default value for the column.
 

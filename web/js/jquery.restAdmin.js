@@ -282,6 +282,18 @@
         e[0].checked = val;
         return e;
       },
+      // Checkboxes don't do what you'd expect when val() is called.
+      // I forget this once a year, which is why I hate checkboxes
+      getValue: function(column, e)
+      {
+        // These values are truthy and falsy, respectively, when 
+        // tested on the server side by either node or PHP. That
+        // suits us better than the strings "true" and "false"
+        // being submitted. An explicit empty string is much less
+        // ambiguous than not submitting the field at all, as a
+        // traditional HTML form would do for an unchecked box.
+        return e[0].checked ? 1 : '';
+      },
       defaultValue: false
     });
 
@@ -634,9 +646,14 @@
         // (for example, rich text editors need to sync
         // to their associated hidden textarea)
         form.find('[data-role="control"]').trigger('jraUpdate');
-        if (!options.types[column.type].selfUpdating)
+        var type = options.types[column.type];
+        if (!type.selfUpdating)
         {
-          datum[column.name] = form.find('[data-column="' + column.name + '"]').val();
+          if (type.getValue) {
+            datum[column.name] = type.getValue(column, form.find('[data-column="' + column.name + '"]'));
+          } else {
+            datum[column.name] = form.find('[data-column="' + column.name + '"]').val();
+          }
         }
       }
     }
