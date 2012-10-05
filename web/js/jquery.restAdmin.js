@@ -491,6 +491,12 @@
       container.html('');
       container.append(newButton);
       container.append(table);
+      // Listening to this event is helpful if you need to update
+      // other things on the page when the list is refreshed. For
+      // instance, if you're using jquery.restAdmin as a CMS for
+      // page components, you might want to actually update them.
+      // Note that all saved edits are followed by this event.
+      container.trigger('jraRefreshedList');
     }
 
     function edit(datum)

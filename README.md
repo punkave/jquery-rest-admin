@@ -139,7 +139,7 @@ If you don't like the default REST storage implementation, you can override the 
 
 `options.rank` should accept an `order` parameter (an array of IDs of objects, in the desired sorting order) and an `options` argument. Invoke `options.success` if all goes well. Invoke `options.error` if all does not go well.
 
-"What if I just want to update an array of objects on the browser side and I don't care about storage in a backend somewhere?" Just set `options.local` to true and make sure you pass in the initial array of objects as `options.data`. Your `options.data` array will be updated in place, so that you can inspect it at any time and find the latest edits are present. (TODO: provide events to make it apparent that edits have occurred.)
+"What if I just want to update an array of objects on the browser side and I don't care about storage in a backend somewhere?" Just set `options.local` to true and make sure you pass in the initial array of objects as `options.data`. Your `options.data` array will be updated in place, so that you can inspect it at any time and find the latest edits are present.
 
 Adding and Customizing Types
 ============================
@@ -189,11 +189,13 @@ Note that you can override any part of the standard types' implementation via th
 Events
 ======
 
-If your control does have an element that can be queried via `val()` but needs a nudge to update it when a save operation takes place, just bind the jraUpdate jQuery event on your control.
+If your control does have an element that can be queried via `val()` but needs a nudge to update it when a save operation takes place, just bind the `jraUpdate` jQuery event on your control.
 
-If your control needs to do part of its initialization after it is absolutely positively really added to the DOM of the page, bind the jraAdded jQuery event on your control.
+If your control needs to do part of its initialization after it is absolutely positively really added to the DOM of the page, bind the `jraAdded` jQuery event on your control.
+
+If your application wishes to be informed whenever the list view is repopulated (which happens initially and whenever an edit is saved), bind the `jraRefreshedList` jQuery event on the container. Note that this event is posted once when the admin is initially populated (i.e. on the initial load of the page), so if you are thinking of triggering a page refresh on this event you should ignore the first one.
 
 TODO
 ====
 
-You can override a number of things not documented here. There are lots of things you can't override yet, in particular the markup. We need a way to propagate server-side validation errors into the UI rather than just mysteriously ignoring a request to save or delete. TODO: document all that; implement more great stuff.
+You can override a number of things not documented here. There are lots of things you can't override yet, in particular the markup, although it is pretty basic bootstrap-friendly markup and doesn't need a lot of overriding. We need a way to propagate server-side validation errors into the UI rather than just mysteriously ignoring a request to save or delete. TODO: document all that; implement more great stuff.
