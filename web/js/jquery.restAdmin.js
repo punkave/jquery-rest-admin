@@ -427,6 +427,7 @@
       eachColumn(function(column) {
         var th = $('<th></th>');
         th.text(column.label);
+        th.addClass(column.name);
         headerRow.append(th);
       });
       headerRow.append($('<th>Actions</th>'));
@@ -440,6 +441,7 @@
         eachColumn(function(column) {
           var val = options.types[column.type].listText(column, datum[column.name]);
           var td = $('<td></td>');
+          td.addClass(column.name);
           if (first)
           {
             if (options.sortable)
